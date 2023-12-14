@@ -132,11 +132,59 @@ const mainHall = new Room("mainHall");
 mainHall.description = "a large hall fit for a king linking to most of the rooms of the castle. It seems as though nature is taking over.";
 const diningRoom = new Room("diningRoom");
 diningRoom.description = "a large room with a grand table as the center piece, decorated with gold.";
-const Kitchen = new Room("Kitchen");
-Kitchen.description = "a narrow room with counters all around, it seems as though there are still items around from when the castle was abandonded..";
+const kitchen = new Room("Kitchen");
+kitchen.description = "a narrow room with counters all around, it seems as though there are still items around from when the castle was abandonded..";
 const mainBedroom = new Room("mainBedroom");
 mainBedroom.description = "a room with a large bed and dressing areas, vines have been abundant here for a while."
 const storageRoom = new Room("storageRoom");
-storageRoom.description = "a small room "
-const Dungeon = new Room("dungeon");
-Dungeon.description = "a dark and dingy dungeon that's been left untouched for centuries.";
+storageRoom.description = "a small room with a large collection of clothes alongside a couple of keys.."
+const dungeon = new Room("dungeon");
+dungeon.description = "a dark and dingy dungeon that's been left untouched for centuries.";
+
+//Connect the rooms
+mainHall.linkRoom("west", diningRoom)
+mainHall.linkRoom("north", mainBedroom)
+mainHall.linkRoom("east", dungeon)
+diningRoom.linkRoom("west", kitchen)
+diningRoom.linkRoom("east", mainHall)
+kitchen.linkRoom("east", diningRoom)
+mainBedroom.linkRoom("east", storageRoom)
+mainBedroom.linkRoom("south", mainHall)
+storageRoom.linkRoom("west", mainBedroom)
+dungeon.linkRoom("west", mainHall)
+
+function displayRoomInfo(room) {
+    let occupantMsg = "";
+    if (room.character === "") {
+        occupantMsg = "";
+    } else {
+        occupantMsg = `${room.character.describe()}. ${room.character.converse()}`
+    }
+
+    textContent = "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>" + "<p>" + room.getDetails() + "</p>";
+
+    document.getElementById("textArea").innerHTML = textContent;
+    document.getElementById("userText").innerHTML = '><input type="text" id="usertext" />';
+    document.getElementById("userText").focus();
+}
+
+function startGame() {
+    currentRoom = mainHall
+    displayRoomInfo(currentRoom);
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            command = document.getElementById("userText").value;
+            const directions = ["north", "south", "west", "east"]
+            if (directions.includes(command.toLowerCase())) {
+                currentRoom = currentRoom.move(command);
+                document.getElementById("userText").value = "";
+                displayRoomInfo(currentRoom);
+            } else {
+                document.getElementById("userText").value = "";
+                alert("That is not a valid command, please try again!")
+            }
+        }
+    });
+}
+startGame();
