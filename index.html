@@ -9,7 +9,17 @@
 
 <body class="bg-cyan-300">
     <main>
-        <div id="gameArea" class="bg-slate-700 rounded-lg m-36">
+
+        <div id="startPage" class="bg-slate-700 rounded-lg sm:m-36 m-16 h-64">
+            <div class="justify-center text-center mx-auto p-6">
+                <h1 class="text-white p-4 sm:text-3xl text-xl">Welcome to Castle Cronkers</h1>
+                <p class="text-white p-4 text-xl">Explore the castle, find items and escape!</p>
+                <button class="bg-cyan-300 p-3 rounded-lg" onclick="startGame()">Start Game</button>
+            </div>
+        </div>
+
+
+        <div id="gameArea" class="bg-slate-700 rounded-lg m-36" style="display:none">
             <div id="details">
                 <div class="justify-center text-center mx-auto p-6">
                     <p id="textArea" class="text-center text-white p-5"></p>
