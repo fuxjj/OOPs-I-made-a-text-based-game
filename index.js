@@ -169,6 +169,9 @@ function displayRoomInfo(Room) {
 }
 
 function startGame() {
+    document.getElementById("startPage").style.display = "none";
+    document.getElementById("gameArea").style.display = "block";
+
     currentRoom = mainHall
     displayRoomInfo(currentRoom);
 
@@ -187,4 +190,3 @@ function startGame() {
         }
     });
 }
-startGame();
