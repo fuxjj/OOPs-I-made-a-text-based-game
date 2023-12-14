@@ -47,11 +47,11 @@ class Room {
     }
 
     getDetails() { //Describe to the user what rooms are in what direction
-        const entries = object.entries(this._linkedRooms);
+        const entries = Object.entries(this._linkedRooms);
         let details = [];
         
         for (const[direction, room] of entries) {
-            let text = `The ${room._name} is to the ${direction}`;
+            let text = ` The ${room._name} is to the ${direction}`;
             details.push(text);
         }
         return details;
@@ -128,17 +128,17 @@ class Character {
 }
 
 //Create our rooms and descriptions
-const mainHall = new Room("mainHall");
+const mainHall = new Room("Main Hall");
 mainHall.description = "a large hall fit for a king linking to most of the rooms of the castle. It seems as though nature is taking over.";
-const diningRoom = new Room("diningRoom");
+const diningRoom = new Room("Dining Room");
 diningRoom.description = "a large room with a grand table as the center piece, decorated with gold.";
 const kitchen = new Room("Kitchen");
 kitchen.description = "a narrow room with counters all around, it seems as though there are still items around from when the castle was abandonded..";
-const mainBedroom = new Room("mainBedroom");
+const mainBedroom = new Room("Main Bedroom");
 mainBedroom.description = "a room with a large bed and dressing areas, vines have been abundant here for a while."
-const storageRoom = new Room("storageRoom");
+const storageRoom = new Room("Storage Room");
 storageRoom.description = "a small room with a large collection of clothes alongside a couple of keys.."
-const dungeon = new Room("dungeon");
+const dungeon = new Room("Dungeon");
 dungeon.description = "a dark and dingy dungeon that's been left untouched for centuries.";
 
 //Connect the rooms
@@ -153,15 +153,15 @@ mainBedroom.linkRoom("south", mainHall)
 storageRoom.linkRoom("west", mainBedroom)
 dungeon.linkRoom("west", mainHall)
 
-function displayRoomInfo(room) {
+function displayRoomInfo(Room) {
     let occupantMsg = "";
-    if (room.character === "") {
+    if (Room.character === "") {
         occupantMsg = "";
     } else {
-        occupantMsg = `${room.character.describe()}. ${room.character.converse()}`
+        occupantMsg = `${Room.character.describe()}. ${Room.character.converse()}`
     }
 
-    textContent = "<p>" + room.describe() + "</p>" + "<p>" + occupantMsg + "</p>" + "<p>" + room.getDetails() + "</p>";
+    textContent = "<p>" + Room.describe() + "</p>" + "<p>" + occupantMsg + "</p>" + "<p>" + Room.getDetails() + "</p>";
 
     document.getElementById("textArea").innerHTML = textContent;
     document.getElementById("userText").innerHTML = '><input type="text" id="usertext" />';
