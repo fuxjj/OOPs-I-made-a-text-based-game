@@ -4,6 +4,7 @@ class Room {
         this._description = "";
         this._linkedRooms = {};
         this._character = "";
+        this._locked = false;
     }
 
     get name() {
@@ -16,6 +17,10 @@ class Room {
 
     get character() {
         return(this._character);
+    }
+
+    get locked() {
+        return this._locked;
     }
 
     set name(value) {
@@ -42,30 +47,52 @@ class Room {
         return `Looking around the ${this._name} you can see ${this._description}`;
     }
 
-    linkRoom(direction, roomToLink) { //Link the rooms together
-        this._linkedRooms[direction] = roomToLink;
+    linkRoom(direction, roomToLink, isLocked=false) { //Link the rooms together
+        if (isLocked) {
+            this._linkedRooms[direction] = null; //Dont allow the user if the room is locked
+        } else {
+            this._linkedRooms[direction] = roomToLink; //Allow the user if the room is unlocked
+        }
+
+        
     }
 
-    getDetails() { //Describe to the user what rooms are in what direction
+    getDetails() {
         const entries = Object.entries(this._linkedRooms);
         let details = [];
         
-        for (const[direction, room] of entries) {
-            let text = ` The ${room._name} is to the ${direction}`;
-            details.push(text);
+        for (const [direction, room] of entries) {
+            if (room) {
+                let text = ` The ${room.name} is to the ${direction}`;
+                details.push(text);
+            } else {
+                let text = ` A locked room is to the ${direction}`;
+                details.push(text);
+            }
         }
         return details;
     }
+    
 
     move(direction) { //Code to allow the user to move to another room OR deny them to go an invalid way
-        if(direction in this._linkedRooms) {
-            return this._linkedRooms[direction];
+        if (this._linkedRooms[direction]) {
+            const nextRoom = this._linkedRooms[direction];
+            if (nextRoom && !nextRoom.locked) {
+                return nextRoom;
+            } else {
+                alert(`The ${nextRoom.name} is locked!`);
+                return this;
+            }
         } else {
-            alert("You can't go that way!",);
-            alert(this._name)
+            alert("You can't go that way!");
             return this;
         }
     } //End of class "room"
+
+    unlock() {
+        this._locked = false;
+        alert(`You have unlocked the ${this._name}!`)
+    }
 }
 
 class Item {
@@ -142,16 +169,17 @@ const dungeon = new Room("Dungeon");
 dungeon.description = "a dark and dingy dungeon that's been left untouched for centuries.";
 
 //Connect the rooms
-mainHall.linkRoom("west", diningRoom)
-mainHall.linkRoom("north", mainBedroom)
-mainHall.linkRoom("east", dungeon)
-diningRoom.linkRoom("west", kitchen)
-diningRoom.linkRoom("east", mainHall)
-kitchen.linkRoom("east", diningRoom)
-mainBedroom.linkRoom("east", storageRoom)
-mainBedroom.linkRoom("south", mainHall)
-storageRoom.linkRoom("west", mainBedroom)
-dungeon.linkRoom("west", mainHall)
+//false means the room is not locked, true means the room is locked
+mainHall.linkRoom("west", diningRoom, false)
+mainHall.linkRoom("north", mainBedroom, false)
+mainHall.linkRoom("east", dungeon, true)
+diningRoom.linkRoom("west", kitchen, false)
+diningRoom.linkRoom("east", mainHall, false)
+kitchen.linkRoom("east", diningRoom, false)
+mainBedroom.linkRoom("east", storageRoom, true)
+mainBedroom.linkRoom("south", mainHall, false)
+storageRoom.linkRoom("west", mainBedroom, false)
+dungeon.linkRoom("west", mainHall, false)
 
 function displayRoomInfo(Room) {
     let occupantMsg = "";
