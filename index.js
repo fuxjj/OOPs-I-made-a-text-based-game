@@ -1,3 +1,4 @@
+let currentRoom;
 class Room {
     constructor(name) {
         this._name = name;
@@ -5,6 +6,7 @@ class Room {
         this._linkedRooms = {};
         this._character = "";
         this._locked = false;
+        this._items = [];
     }
 
     get name() {
@@ -21,6 +23,10 @@ class Room {
 
     get locked() {
         return this._locked;
+    }
+
+    get items() {
+        return this._items;
     }
 
     set name(value) {
@@ -45,6 +51,15 @@ class Room {
 
     describe() { //Describe the room the user is currently in
         return `Looking around the ${this._name} you can see ${this._description}`;
+    }
+
+    describeItems() {
+        if (this._items.length > 0) {
+            const itemNames = this._items.map(item => item.name);
+            return `You see ${itemNames.join(', ')} in the ${this._name}.`;
+        } else {
+            return `There are no items in the ${this._name}.`;
+        }
     }
 
     linkRoom(direction, roomToLink, isLocked=false) { //Link the rooms together
@@ -74,31 +89,55 @@ class Room {
     }
     
 
-    move(direction) { //Code to allow the user to move to another room OR deny them to go an invalid way
+    move(direction) {
         if (this._linkedRooms[direction]) {
             const nextRoom = this._linkedRooms[direction];
-            if (nextRoom && !nextRoom.locked) {
-                return nextRoom;
+            if (nextRoom && nextRoom.locked) {
+                if (player.hasKey()) {
+                    nextRoom.unlock();
+                    player.useKey();
+                    return nextRoom;
+                } else {
+                    alert(`The ${nextRoom.name} is locked, and you don't have the key!`);
+                    return this;
+                }
             } else {
-                alert(`The ${nextRoom.name} is locked!`);
-                return this;
+                return nextRoom;
             }
         } else {
             alert("You can't go that way!");
             return this;
         }
-    } //End of class "room"
+    }
+    
 
     unlock() {
         this._locked = false;
         alert(`You have unlocked the ${this._name}!`)
     }
+
+    addItem(item) {
+        this._items.push(item)
+    }
 }
 
 class Item {
-    constructor(name) {
+    constructor(name, description, isKey = false) {
         this._name = name,
-        this._description = ""
+        this._description = description
+        this._isKey = isKey
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    get isKey() {
+        return this._isKey;
     }
 }
 
@@ -107,6 +146,7 @@ class Character {
         this._name = name,
         this._description = ""
         this._conversation = ""
+        this._inventory = [];
     }
 
     set name(value) {
@@ -152,7 +192,34 @@ class Character {
     converse() {
         return  `${this._name} says ${this._conversation}`;
     }
+
+    addItemToInventory(item) {
+        this._inventory.push(item);
+    }
+
+    describeInventory() {
+        if(this._inventory.length >  0) {
+            const itemNames = this._inventory.map(item => item.name);
+            return `You have ${itemNames.join(', ')} in your inventory.`
+        } else {
+            return `Your inventory is empty.`;
+        }
+    }
+
+    hasKey() {
+        return this._inventory.some(item => item.isKey);
+    }
+
+    useKey() {
+        // Remove the key from the player's inventory
+        const keyIndex = this._inventory.findIndex(item => item.isKey);
+        if (keyIndex !== -1) {
+            this._inventory.splice(keyIndex, 1);
+        }
+    }
 }
+
+const player = new Character("PlayerName");
 
 //Create our rooms and descriptions
 const mainHall = new Room("Main Hall");
@@ -189,12 +256,15 @@ function displayRoomInfo(Room) {
         occupantMsg = `${Room.character.describe()}. ${Room.character.converse()}`
     }
 
-    textContent = "<p>" + Room.describe() + "</p>" + "<p>" + occupantMsg + "</p>" + "<p>" + Room.getDetails() + "</p>";
+    let inventoryMsg = player.describeInventory();
+
+    let textContent = "<p>" + Room.describe() + "</p>" + "<p>" + occupantMsg + "</p>" + "<p>" + Room.getDetails() + "</p>" + "<p>" + inventoryMsg + "</p>";
 
     document.getElementById("textArea").innerHTML = textContent;
     document.getElementById("userText").innerHTML = '><input type="text" id="usertext" />';
     document.getElementById("userText").focus();
 }
+
 
 function startGame() {
     document.getElementById("startPage").style.display = "none";
@@ -208,13 +278,26 @@ function startGame() {
             command = document.getElementById("userText").value;
             const directions = ["north", "south", "west", "east"]
             if (directions.includes(command.toLowerCase())) {
-                currentRoom = currentRoom.move(command);
+                const newRoom = currentRoom.move(command);
+                if (newRoom !== currentRoom) {
+                    currentRoom = newRoom;
+                    displayRoomInfo(currentRoom);
+                }
                 document.getElementById("userText").value = "";
-                displayRoomInfo(currentRoom);
             } else {
                 document.getElementById("userText").value = "";
                 alert("That is not a valid command, please try again!")
             }
         }
     });
+
+    if (currentRoom === kitchen) {
+        player.addItemToInventory(knife);
+    }
+    
 }
+
+//add Items for the user to collect
+const knife = new Item("Knife", "A cooking knife");
+kitchen.addItem(knife);
+
