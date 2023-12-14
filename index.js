@@ -38,15 +38,40 @@ class Room {
         this._character = value;
     }
 
-    describe() {
+    describe() { //Describe the room the user is currently in
         return `Looking around the ${this._name} you can see ${this._description}`;
     }
 
-    linkRoom(direction, roomToLink) {
+    linkRoom(direction, roomToLink) { //Link the rooms together
         this._linkedRooms[direction] = roomToLink;
     }
 
-    getDetails() {
+    getDetails() { //Describe to the user what rooms are in what direction
+        const entries = object.entries(this._linkedRooms);
+        let details = [];
         
+        for (const[direction, room] of entries) {
+            let text = `The ${room._name} is to the ${direction}`;
+            details.push(text);
+        }
+        return details;
+    }
+
+    move(direction) { //Code to allow the user to move to another room OR deny them to go an invalid way
+        if(direction in this._linkedRooms) {
+            return this._linkedRooms[direction];
+        } else {
+            alert("You can't go that way!",);
+            alert(this._name)
+            return this;
+        }
+    } //End of class "room"
+}
+
+class Item {
+    constructor(name) {
+        this._name = name,
+        this._description = ""
     }
 }
+
