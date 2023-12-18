@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Castle Cr</title>
+    <title>Realm of Shadows: Castle Conundrum</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-cyan-300">
+<body class="bg-[url('/img/castle.png')] bg-center bg-cover bg-local">
     <main>
 
-        <div id="startPage" class="bg-slate-700 rounded-lg sm:m-36 m-16 h-64">
+        <div id="startPage" class="bg-slate-700 rounded-lg sm:m-36 m-16 h-96">
             <div class="justify-center text-center mx-auto p-6">
-                <h1 class="text-white p-4 sm:text-3xl text-xl">Welcome to Castle Cr</h1>
-                <p class="text-white p-4 text-xl">Explore the castle, find items and escape!</p>
+                <h1 class="text-white p-4 sm:text-3xl text-xl">Welcome to Realm of Shadows: Castle Conundrum!</h1>
+                <p class="text-white p-2 px-5 text-xl">You're an adventurer belonging to a guild, as the strongest adventurer in the guild, you have been tasked to explore an ancient castle newly found by scouts. However, once you enter, the castle doors slam shut!</p>
+                <p class="text-white p-4 text-xl">You're trapped in the castle! Explore the castle, find items and escape!</p>
                 <button class="bg-cyan-300 p-3 rounded-lg" onclick="startGame()">Start Game</button>
-                <p class="text-white text-xs pt-1">The commands usable are 'north', 'east', 'south' and 'west'!</p>
+                <p class="text-white text-xs pt-2">The commands usable are 'north', 'east', 'south', 'west' and 'use [item]'!</p>
             </div>
         </div>
 
